@@ -4,8 +4,9 @@ import cv2
 import numpy as np
 
 
-video_capture = cv2.VideoCapture(0)
 
+
+video_capture = cv2.VideoCapture(0)
 image = face_recognition.load_image_file("foto_personal.jpg")
 face_encoding = face_recognition.face_encodings(image)[0]
 
@@ -32,14 +33,16 @@ while True:
 
     rgb_small_frame = small_frame[:, :, ::-1]
 
+
+
     if process_this_frame:
-        face_locations = face_recognition.face_locations(rgb_small_frame)
+        face_locations = face_recognition.face_locations(rgb_small_frame,model="hog")
         face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
         face_names = []
         for face_encoding in face_encodings:
             matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
-            name = "Desconocido"
+            name = "???"
             face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
             best_match_index = np.argmin(face_distances)
             if matches[best_match_index]:
@@ -56,10 +59,9 @@ while True:
         bottom *= scale
         left *= scale
 
-        cv2.rectangle(frame, (left, top), (right, bottom), (255, 0, 255), 1)
-        cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (255, 0, 255), cv2.FILLED)
+        cv2.rectangle(frame, (left, top), (right, bottom), (251, 0, 255), 1)
         font = cv2.FONT_HERSHEY_SIMPLEX
-        cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+        cv2.putText(frame, name, (top,top), font, 1.0, (255, 255, 255), 1)
 
     cv2.imshow('Video', frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
